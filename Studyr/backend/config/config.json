@@ -1,14 +1,14 @@
 {
   "development": {
     "username": "postgres",
-    "password": "your_password_here",
+    "password": "8thgeni5/",
     "database": "studyrDB",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
-    "password": "your_password_here",
+    "password": "8thgeni5/",
     "database": "studyrTestDB",
     "host": "127.0.0.1",
     "dialect": "postgres"
