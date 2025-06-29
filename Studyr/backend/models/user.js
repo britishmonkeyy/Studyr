@@ -17,10 +17,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     // Instance method to set password
-    async setPassword(password) {
-      const salt = await bcrypt.genSalt(10);
-      this.passwordHash = await bcrypt.hash(password, salt);
-    }
+async setPassword(password) {
+  const bcrypt = require('bcryptjs');
+  const salt = await bcrypt.genSalt(10);
+  this.passwordHash = await bcrypt.hash(password, salt);
+}
 
     // Calculate age from date of birth
     calculateAge() {
@@ -156,7 +157,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true,
     hooks: {
-      // Before creating user, validate age
+      // Before creating & updating user, validate age
       beforeCreate: async (user) => {
         const age = user.calculateAge();
         if (age < 13) {
