@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
+const subjectRoutes = require('./routes/subjectRoutes');
+const studySessionRoutes = require('./routes/studySessionRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +15,8 @@ app.use(express.json());
 
 // Add auth routes
 app.use('/api/auth', authRoutes);
+app.use('/api/sessions', studySessionRoutes);
+app.use('/api/subjects', subjectRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
