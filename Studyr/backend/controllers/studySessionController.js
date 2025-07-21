@@ -1,4 +1,5 @@
 const { StudySession, Subject, User } = require('../models');
+const AnalyticsService = require('../services/analyticsService');
 
 // Get all study sessions for the authenticated user
 const getUserStudySessions = async (req, res) => {
@@ -115,7 +116,7 @@ const getStudySessionById = async (req, res) => {
 const updateStudySession = async (req, res) => {
   try {
     const { id } = req.params;
-    const { sessionTitle, sessionType, startTime, endTime, location, notes, status } = req.body;
+    const { sessionTitle, sessionType, startTime, endTime, location, notes, status, productivityRating } = req.body;
 
     const session = await StudySession.findOne({
       where: { 
@@ -139,6 +140,7 @@ const updateStudySession = async (req, res) => {
     if (location !== undefined) session.location = location;
     if (notes !== undefined) session.notes = notes;
     if (status) session.status = status;
+    if (productivityRating) session.productivityRating = productivityRating;
 
     // Recalculate duration if times changed
     if (startTime || endTime) {
@@ -148,6 +150,16 @@ const updateStudySession = async (req, res) => {
     }
 
     await session.save();
+
+    // If session was completed, update analytics
+    if (status === 'completed') {
+      try {
+        await AnalyticsService.updateAnalyticsForCompletedSession(req.user.userId, session.sessionId);
+      } catch (analyticsError) {
+        console.error('Analytics update failed:', analyticsError);
+        // Don't fail the request if analytics update fails
+      }
+    }
 
     // Fetch updated session with subject details
     const updatedSession = await StudySession.findByPk(session.sessionId, {
@@ -206,10 +218,11 @@ const deleteStudySession = async (req, res) => {
   }
 };
 
-// Mark session as completed
+// Mark session as completed (enhanced with analytics)
 const completeStudySession = async (req, res) => {
   try {
     const { id } = req.params;
+    const { productivityRating, actualEndTime } = req.body;
     
     const session = await StudySession.findOne({
       where: { 
@@ -225,12 +238,103 @@ const completeStudySession = async (req, res) => {
       });
     }
 
-    await session.complete(); // Uses the model method we created
+    // Update session status and optional fields
+    session.status = 'completed';
+    if (actualEndTime) {
+      session.endTime = actualEndTime;
+      // Recalculate duration
+      const start = new Date(session.startTime);
+      const end = new Date(session.endTime);
+      session.durationMinutes = Math.round((end - start) / (1000 * 60));
+    }
+    if (productivityRating) {
+      session.productivityRating = productivityRating;
+    }
+
+    await session.save();
+
+    // Update analytics
+    try {
+      await AnalyticsService.updateAnalyticsForCompletedSession(req.user.userId, session.sessionId);
+    } catch (analyticsError) {
+      console.error('Analytics update failed:', analyticsError);
+      // Continue even if analytics fails
+    }
+
+    // Fetch updated session with subject details
+    const completedSession = await StudySession.findByPk(session.sessionId, {
+      include: [
+        {
+          model: Subject,
+          as: 'subject',
+          attributes: ['subjectName', 'subjectCode', 'colorHex', 'iconEmoji']
+        }
+      ]
+    });
 
     res.json({
       success: true,
       message: 'Study session marked as completed',
-      data: { session }
+      data: { session: completedSession }
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Start session (new endpoint)
+const startStudySession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { actualStartTime } = req.body;
+    
+    const session = await StudySession.findOne({
+      where: { 
+        sessionId: id,
+        userId: req.user.userId 
+      }
+    });
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: 'Study session not found'
+      });
+    }
+
+    if (session.status !== 'scheduled') {
+      return res.status(400).json({
+        success: false,
+        message: 'Session cannot be started'
+      });
+    }
+
+    // Update session status
+    session.status = 'inProgress';
+    if (actualStartTime) {
+      session.startTime = actualStartTime;
+    }
+
+    await session.save();
+
+    // Fetch updated session with subject details
+    const startedSession = await StudySession.findByPk(session.sessionId, {
+      include: [
+        {
+          model: Subject,
+          as: 'subject',
+          attributes: ['subjectName', 'subjectCode', 'colorHex', 'iconEmoji']
+        }
+      ]
+    });
+
+    res.json({
+      success: true,
+      message: 'Study session started successfully',
+      data: { session: startedSession }
     });
   } catch (error) {
     res.status(400).json({
@@ -246,5 +350,6 @@ module.exports = {
   getStudySessionById,
   updateStudySession,
   deleteStudySession,
-  completeStudySession
+  completeStudySession,
+  startStudySession
 };
