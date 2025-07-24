@@ -11,7 +11,15 @@ module.exports = (sequelize, DataTypes) => {
         as: 'studySessions'
       });
       // User.hasMany(models.StudyPartner, { foreignKey: 'requesterId' });
-      // User.hasOne(models.StudyStreak, { foreignKey: 'userId' });
+        User.hasOne(models.StudyStreak, {
+          foreignKey: 'userId',
+          as: 'streak'
+        });
+
+        User.hasMany(models.UserAnalytics, {
+          foreignKey: 'userId',
+          as: 'analytics'
+        });
     }
 
     // Instance method to check password

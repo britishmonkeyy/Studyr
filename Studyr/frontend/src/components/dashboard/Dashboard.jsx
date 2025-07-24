@@ -18,14 +18,15 @@ import {
   LinearProgress,
   Paper,
   Divider,
-  Badge
+  Badge,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Logout,
   AccountCircle,
   School,
   Add,
-  LocalFireDepartment,
   TrendingUp,
   Timer,
   Book,
@@ -35,27 +36,35 @@ import {
   Settings,
   Dashboard as DashboardIcon,
   Assignment,
-  Today
+  Today,
+  EmojiEvents,
+  Insights,
+  Analytics
 } from '@mui/icons-material';
-import { sessionsAPI, subjectsAPI, removeAuthToken } from '../../services/api';
+import { sessionsAPI, subjectsAPI, analyticsAPI, removeAuthToken } from '../../services/api';
 import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import CreateSessionModal from './CreateSessionModal';
 import SessionsList from './SessionsList';
 import SubjectManagement from './SubjectManagement';
+import AnalyticsPage from './AnalyticsPage';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [showSessionsList, setShowSessionsList] = useState(false);
   const [showSubjectManagement, setShowSubjectManagement] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
+    loadAnalytics();
   }, []);
 
   const loadDashboardData = async () => {
@@ -74,6 +83,18 @@ const Dashboard = () => {
       console.error('Failed to load dashboard data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const response = await analyticsAPI.getDashboard();
+      setAnalytics(response.data.data);
+    } catch (error) {
+      console.error('Failed to load analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
     }
   };
 
@@ -100,6 +121,10 @@ const Dashboard = () => {
         session.sessionId === updatedSession.sessionId ? updatedSession : session
       )
     );
+    // Reload analytics when a session is updated/completed
+    if (updatedSession.status === 'completed') {
+      loadAnalytics();
+    }
   };
 
   const handleSessionDelete = (sessionId) => {
@@ -114,17 +139,16 @@ const Dashboard = () => {
     );
   }
 
-  // Calculate stats
+  // Calculate basic stats from sessions (fallback if analytics aren't loaded)
   const completedSessions = sessions.filter(s => s.status === 'completed').length;
   const totalStudyTime = sessions
     .filter(s => s.status === 'completed')
     .reduce((total, session) => total + session.durationMinutes, 0);
   
-  // Gamification data (subtle)
-  const currentStreak = 12;
-  const todayStudyTime = 2.5;
-  const weeklyGoal = 15;
-  const weekProgress = Math.min((todayStudyTime / weeklyGoal) * 100, 100);
+  // Use analytics data if available, otherwise fall back to calculated data
+  const streak = analytics?.stats?.streak || { currentStreak: 0, status: 'no_streak', message: 'Complete a session to start your streak!' };
+  const weeklyGoal = analytics?.goalProgress || { progress: 0, current: 0, target: 900, remaining: 900 }; // 15 hours default
+  const weekProgress = weeklyGoal.progress || 0;
 
   // Get today's sessions
   const todaySessions = sessions.filter(session => {
@@ -147,9 +171,26 @@ const Dashboard = () => {
   };
 
   const getCurrentView = () => {
+    if (showAnalytics) return 'Analytics';
     if (showSubjectManagement) return 'Subjects';
     if (showSessionsList) return 'Sessions';
     return 'Dashboard';
+  };
+
+  const getStreakIcon = () => {
+    if (streak.currentStreak >= 30) return '🏆';
+    if (streak.currentStreak >= 14) return '⭐';
+    if (streak.currentStreak >= 7) return '🔥';
+    return '📚';
+  };
+
+  const formatTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
   };
 
   return (
@@ -178,6 +219,7 @@ const Dashboard = () => {
               onClick={() => {
                 setShowSessionsList(false);
                 setShowSubjectManagement(false);
+                setShowAnalytics(false);
               }}
             >
               Studyr
@@ -248,7 +290,9 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ py: 3 }}>
-        {showSubjectManagement ? (
+        {showAnalytics ? (
+          <AnalyticsPage onBack={() => setShowAnalytics(false)} />
+        ) : showSubjectManagement ? (
           <SubjectManagement onBack={() => setShowSubjectManagement(false)} />
         ) : showSessionsList ? (
           <SessionsList
@@ -277,20 +321,58 @@ const Dashboard = () => {
               </Typography>
             </Box>
 
-            {/* Quick Stats */}
+            {/* Analytics Loading */}
+            {analyticsLoading && (
+              <Alert severity="info" sx={{ mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CircularProgress size={20} sx={{ mr: 2 }} />
+                  Loading your analytics...
+                </Box>
+              </Alert>
+            )}
+
+            {/* Enhanced Stats with Real Analytics */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
               <Grid item xs={12} md={3}>
-                <Card elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: 2 }}>
+                <Card 
+                  elevation={0} 
+                  sx={{ 
+                    border: '1px solid #e0e0e0', 
+                    borderRadius: 2,
+                    background: streak.currentStreak > 0 ? 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)' : 'white'
+                  }}
+                >
                   <CardContent sx={{ textAlign: 'center', py: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-                      <LocalFireDepartment sx={{ color: '#ff6b35', mr: 1 }} />
-                      <Typography variant="h4" sx={{ fontWeight: 400, color: '#202124' }}>
-                        {currentStreak}
+                      <Typography variant="h3" sx={{ mr: 1, fontSize: '2rem' }}>
+                        {getStreakIcon()}
+                      </Typography>
+                      <Typography 
+                        variant="h4" 
+                        sx={{ 
+                          fontWeight: 400, 
+                          color: streak.currentStreak > 0 ? 'white' : '#202124' 
+                        }}
+                      >
+                        {streak.currentStreak}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: streak.currentStreak > 0 ? 'rgba(255,255,255,0.9)' : 'text.secondary' 
+                      }}
+                    >
                       Day streak
                     </Typography>
+                    {streak.isAtRisk && (
+                      <Chip 
+                        label="At Risk!" 
+                        size="small" 
+                        color="warning" 
+                        sx={{ mt: 1 }} 
+                      />
+                    )}
                   </CardContent>
                 </Card>
               </Grid>
@@ -301,11 +383,11 @@ const Dashboard = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
                       <Timer sx={{ color: '#1a73e8', mr: 1 }} />
                       <Typography variant="h4" sx={{ fontWeight: 400, color: '#202124' }}>
-                        {todayStudyTime}h
+                        {formatTime(weeklyGoal.current)}
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary">
-                      Today's focus
+                      This week
                     </Typography>
                   </CardContent>
                 </Card>
@@ -317,7 +399,7 @@ const Dashboard = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
                       <TrendingUp sx={{ color: '#34a853', mr: 1 }} />
                       <Typography variant="h4" sx={{ fontWeight: 400, color: '#202124' }}>
-                        {completedSessions}
+                        {analytics?.stats?.sessions?.completedSessions || completedSessions}
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary">
@@ -344,15 +426,18 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            {/* Weekly Progress */}
+            {/* Enhanced Weekly Progress */}
             <Card elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: 2, mb: 4 }}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500, color: '#202124' }}>
-                    Weekly goal
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <EmojiEvents sx={{ mr: 1, color: '#1a73e8' }} />
+                    <Typography variant="h6" sx={{ fontWeight: 500, color: '#202124' }}>
+                      Weekly goal
+                    </Typography>
+                  </Box>
                   <Typography variant="body2" color="text.secondary">
-                    {todayStudyTime}h of {weeklyGoal}h
+                    {formatTime(weeklyGoal.current)} of {formatTime(weeklyGoal.target)}
                   </Typography>
                 </Box>
                 <LinearProgress
@@ -368,11 +453,20 @@ const Dashboard = () => {
                     }
                   }}
                 />
-                {weekProgress >= 100 && (
-                  <Typography variant="body2" sx={{ mt: 1, color: '#34a853', fontWeight: 500 }}>
-                    🎉 Goal achieved!
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {weekProgress.toFixed(0)}% complete
                   </Typography>
-                )}
+                  {weekProgress >= 100 ? (
+                    <Typography variant="body2" sx={{ color: '#34a853', fontWeight: 500 }}>
+                      🎉 Goal achieved!
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      {formatTime(weeklyGoal.remaining)} remaining
+                    </Typography>
+                  )}
+                </Box>
               </CardContent>
             </Card>
 
@@ -564,6 +658,25 @@ const Dashboard = () => {
                 }}
               >
                 Manage subjects
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<Analytics />}
+                onClick={() => setShowAnalytics(true)}
+                sx={{
+                  borderColor: '#dadce0',
+                  color: '#202124',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  borderRadius: 2,
+                  '&:hover': {
+                    bgcolor: '#f8f9fa',
+                    borderColor: '#1a73e8'
+                  }
+                }}
+              >
+                View analytics
               </Button>
             </Box>
           </>

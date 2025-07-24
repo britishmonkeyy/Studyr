@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model, Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class UserAnalytics extends Model {
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           userId,
           date: {
-            [sequelize.Sequelize.Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+            [Op.between]: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
           }
         }
       });
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           userId,
           date: {
-            [sequelize.Sequelize.Op.between]: [startDate, endDate]
+            [Op.between]: [startDate, endDate]
           }
         },
         order: [['date', 'ASC']]
@@ -160,7 +160,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
+      field: 'analytics_id'
     },
     userId: {
       type: DataTypes.UUID,
@@ -221,19 +222,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'UserAnalytics',
     tableName: 'user_analytics',
     timestamps: true,
-    underscored: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ['user_id', 'date']
-      },
-      {
-        fields: ['date']
-      },
-      {
-        fields: ['user_id']
-      }
-    ]
+    underscored: true
   });
 
   return UserAnalytics;

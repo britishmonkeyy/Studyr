@@ -136,7 +136,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
+      field: 'streak_id'
     },
     userId: {
       type: DataTypes.UUID,
@@ -189,18 +190,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'StudyStreak',
     tableName: 'study_streaks',
     timestamps: true,
-    underscored: true,
-    indexes: [
-      {
-        fields: ['user_id']
-      },
-      {
-        fields: ['current_streak']
-      },
-      {
-        fields: ['last_study_date']
-      }
-    ]
+    underscored: true
   });
 
   return StudyStreak;

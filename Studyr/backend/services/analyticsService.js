@@ -21,9 +21,6 @@ class AnalyticsService {
       // Update daily analytics
       await this.updateDailyAnalytics(userId, session);
 
-      // Check for achievements (placeholder for future implementation)
-      // await this.checkAchievements(userId);
-
       return { success: true };
     } catch (error) {
       console.error('Error updating analytics:', error);
@@ -166,3 +163,104 @@ class AnalyticsService {
         startTime: {
           [Op.between]: [startDate, endDate]
         }
+      },
+      include: [{
+        model: Subject,
+        as: 'subject',
+        attributes: ['subjectName', 'colorHex', 'category']
+      }]
+    });
+
+    const totalSessions = sessions.length;
+    const completedSessions = sessions.filter(s => s.status === 'completed');
+    const cancelledSessions = sessions.filter(s => s.status === 'cancelled');
+    const completionRate = totalSessions > 0 ? Math.round((completedSessions.length / totalSessions) * 100) : 0;
+
+    // Session type distribution
+    const sessionTypes = {
+      solo: sessions.filter(s => s.sessionType === 'solo').length,
+      partner: sessions.filter(s => s.sessionType === 'partner').length,
+      group: sessions.filter(s => s.sessionType === 'group').length
+    };
+
+    // Average session length
+    const avgSessionLength = completedSessions.length > 0 
+      ? Math.round(completedSessions.reduce((sum, s) => sum + s.durationMinutes, 0) / completedSessions.length)
+      : 0;
+
+    // Most studied subjects
+    const subjectStats = {};
+    completedSessions.forEach(session => {
+      const subjectId = session.subjectId;
+      if (!subjectStats[subjectId]) {
+        subjectStats[subjectId] = {
+          subjectName: session.subject?.subjectName || 'Unknown',
+          colorHex: session.subject?.colorHex || '#4ECDC4',
+          sessionCount: 0,
+          totalMinutes: 0
+        };
+      }
+      subjectStats[subjectId].sessionCount++;
+      subjectStats[subjectId].totalMinutes += session.durationMinutes;
+    });
+
+    const topSubjects = Object.values(subjectStats)
+      .sort((a, b) => b.totalMinutes - a.totalMinutes)
+      .slice(0, 5);
+
+    return {
+      totalSessions,
+      completedSessions: completedSessions.length,
+      cancelledSessions: cancelledSessions.length,
+      completionRate,
+      avgSessionLength,
+      sessionTypes,
+      topSubjects
+    };
+  }
+
+  // Get goal progress (weekly goal tracking)
+  static async getGoalProgress(userId, goalType = 'weekly', targetValue = null) {
+    const goals = {
+      weekly: {
+        target: targetValue || 15 * 60, // 15 hours in minutes
+        period: 7,
+        label: 'Weekly Study Goal'
+      },
+      daily: {
+        target: targetValue || 2 * 60, // 2 hours in minutes
+        period: 1,
+        label: 'Daily Study Goal'
+      }
+    };
+
+    const goal = goals[goalType];
+    if (!goal) throw new Error('Invalid goal type');
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - goal.period);
+
+    const analytics = await UserAnalytics.getAnalyticsRange(
+      userId,
+      startDate.toISOString().split('T')[0],
+      endDate.toISOString().split('T')[0]
+    );
+
+    const totalStudyTime = analytics.reduce((sum, day) => sum + day.totalStudyMinutes, 0);
+    const progress = Math.min((totalStudyTime / goal.target) * 100, 100);
+    const remaining = Math.max(goal.target - totalStudyTime, 0);
+
+    return {
+      goalType,
+      target: goal.target,
+      current: totalStudyTime,
+      progress: Math.round(progress),
+      remaining,
+      label: goal.label,
+      achieved: progress >= 100
+    };
+  }
+}
+
+module.exports = AnalyticsService;
