@@ -3,20 +3,19 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Subject extends Model {
-  static associate(models) {
-    // Subject has many StudySessions
-    Subject.hasMany(models.StudySession, {
-      foreignKey: 'subjectId',
-      as: 'studySessions'
-    });
-    
-    // Removing this for now since i don't have UserSubject model yet
-    // Subject.belongsToMany(models.User, {
-    //   through: 'UserSubjects',
-    //   foreignKey: 'subjectId',
-    //   as: 'users'
-    // });
-  }
+    static associate(models) {
+      // Subject belongs to User
+      Subject.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user'
+      });
+
+      // Subject has many StudySessions
+      Subject.hasMany(models.StudySession, {
+        foreignKey: 'subjectId',
+        as: 'studySessions'
+      });
+    }
 
     // Get a random color for new subjects
     static getRandomColor() {
@@ -34,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         ? `${this.subjectCode} - ${this.subjectName}`
         : this.subjectName;
     }
+
+    // Check if user owns this subject
+    isOwnedBy(userId) {
+      return this.userId === userId;
+    }
   }
 
   Subject.init({
@@ -42,6 +46,15 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: 'user_id',
+      references: {
+        model: 'users',
+        key: 'user_id'
+      }
     },
     subjectName: {
       type: DataTypes.STRING(100),
@@ -63,8 +76,11 @@ module.exports = (sequelize, DataTypes) => {
     category: {
       type: DataTypes.ENUM(
         'mathematics',
-        'science', 
-        'humanities',
+        'english',
+        'psychology',
+        'physics',
+        'biology',
+        'history',
         'languages',
         'arts',
         'technology',
@@ -102,7 +118,18 @@ module.exports = (sequelize, DataTypes) => {
           subject.colorHex = Subject.getRandomColor();
         }
       }
-    }
+    },
+    indexes: [
+      {
+        fields: ['user_id']
+      },
+      {
+        fields: ['user_id', 'subject_name']
+      },
+      {
+        fields: ['category']
+      }
+    ]
   });
 
   return Subject;

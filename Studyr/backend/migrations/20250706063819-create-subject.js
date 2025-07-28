@@ -9,6 +9,16 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
+      user_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       subject_name: {
         type: Sequelize.STRING(100),
         allowNull: false
@@ -45,6 +55,8 @@ module.exports = {
     // Add indexes
     await queryInterface.addIndex('subjects', ['subject_name']);
     await queryInterface.addIndex('subjects', ['category']);
+    await queryInterface.addIndex('subjects', ['user_id']);
+    await queryInterface.addIndex('subjects', ['user_id', 'subject_name']);
   },
 
   async down(queryInterface, Sequelize) {

@@ -1,5 +1,12 @@
 const express = require('express');
-const { getAllSubjects, createSubject, getSubjectById, deleteSubject, updateSubject } = require('../controllers/subjectController');
+const { 
+  getAllSubjects, 
+  createSubject, 
+  getSubjectById, 
+  deleteSubject, 
+  updateSubject,
+  getSubjectStats 
+} = require('../controllers/subjectController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -8,9 +15,11 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // Subject routes
-router.get('/', getAllSubjects);
-router.post('/', createSubject);
-router.get('/:id', getSubjectById);
-router.delete('/:id', deleteSubject);
-router.put('/:id', updateSubject);
+router.get('/', getAllSubjects);              // GET /api/subjects - Get user's subjects
+router.post('/', createSubject);              // POST /api/subjects - Create new subject
+router.get('/stats', getSubjectStats);        // GET /api/subjects/stats - Get subject statistics
+router.get('/:id', getSubjectById);           // GET /api/subjects/:id - Get specific subject
+router.put('/:id', updateSubject);            // PUT /api/subjects/:id - Update subject
+router.delete('/:id', deleteSubject);         // DELETE /api/subjects/:id - Delete subject
+
 module.exports = router;

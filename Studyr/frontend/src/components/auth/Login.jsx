@@ -246,6 +246,8 @@ const Login = () => {
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button
+                  component={Link}
+                  to="/register"
                   variant="outlined"
                   sx={{
                     color: '#1a73e8',
@@ -260,7 +262,6 @@ const Login = () => {
                       borderColor: '#1a73e8'
                     }
                   }}
-                  onClick={() => alert('Create account coming soon!')}
                 >
                   Create account
                 </Button>

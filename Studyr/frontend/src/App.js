@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import { getAuthToken } from './services/api';
 
@@ -108,7 +109,7 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/login" replace />;
 };
 
-// Public Route Component
+// Public Route Component (redirects to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const token = getAuthToken();
   return !token ? children : <Navigate to="/dashboard" replace />;
@@ -129,6 +130,15 @@ function App() {
               </PublicRoute>
             } 
           />
+          
+          <Route 
+            path="/register" 
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            } 
+          />
 
           {/* Protected Routes */}
           <Route 
@@ -141,7 +151,7 @@ function App() {
           />
 
           {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           
           {/* 404 route */}
           <Route 
