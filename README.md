@@ -62,8 +62,3 @@ Studyr combines personal study planning with social features to create an engagi
 - **SendGrid** - Email notifications
 - **Socket.IO** - Real-time messaging
 - **Google Analytics** - Usage analytics
-
-
----
-
-**Made with ❤️ in Melbourne, Australia** 🇦🇺
