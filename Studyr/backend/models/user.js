@@ -5,21 +5,29 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Define associations here
+      // User has many StudySessions
       User.hasMany(models.StudySession, {
         foreignKey: 'userId',
         as: 'studySessions'
       });
-      // User.hasMany(models.StudyPartner, { foreignKey: 'requesterId' });
-        User.hasOne(models.StudyStreak, {
-          foreignKey: 'userId',
-          as: 'streak'
-        });
 
-        User.hasMany(models.UserAnalytics, {
-          foreignKey: 'userId',
-          as: 'analytics'
-        });
+      // User has many Subjects
+      User.hasMany(models.Subject, {
+        foreignKey: 'userId',
+        as: 'subjects'
+      });
+
+      // User has one StudyStreak
+      User.hasOne(models.StudyStreak, {
+        foreignKey: 'userId',
+        as: 'streak'
+      });
+
+      // User has many UserAnalytics
+      User.hasMany(models.UserAnalytics, {
+        foreignKey: 'userId',
+        as: 'analytics'
+      });
     }
 
     // Instance method to check password
@@ -28,11 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     // Instance method to set password
-async setPassword(password) {
-  const bcrypt = require('bcryptjs');
-  const salt = await bcrypt.genSalt(10);
-  this.passwordHash = await bcrypt.hash(password, salt);
-}
+    async setPassword(password) {
+      const bcrypt = require('bcryptjs');
+      const salt = await bcrypt.genSalt(10);
+      this.passwordHash = await bcrypt.hash(password, salt);
+    }
 
     // Calculate age from date of birth
     calculateAge() {
@@ -57,6 +65,49 @@ async setPassword(password) {
       const values = { ...this.get() };
       delete values.passwordHash;
       return values;
+    }
+
+    // Get user's subject count
+    async getSubjectCount() {
+      const { Subject } = require('./subject');
+      return await Subject.count({
+        where: { userId: this.userId }
+      });
+    }
+
+    // Create default subjects for new user
+    async createDefaultSubjects() {
+      const { Subject } = require('./subject');
+      
+      const defaultSubjects = [
+        {
+          subjectName: 'Mathematics',
+          category: 'mathematics',
+          colorHex: '#FF6B6B',
+          iconEmoji: '🔢'
+        },
+        {
+          subjectName: 'English',
+          category: 'english', 
+          colorHex: '#4ECDC4',
+          iconEmoji: '📖'
+        },
+        {
+          subjectName: 'Science',
+          category: 'physics',
+          colorHex: '#45B7D1',
+          iconEmoji: '🔬'
+        }
+      ];
+
+      const subjects = await Subject.bulkCreate(
+        defaultSubjects.map(subject => ({
+          ...subject,
+          userId: this.userId
+        }))
+      );
+
+      return subjects;
     }
   }
 
@@ -181,6 +232,15 @@ async setPassword(password) {
           if (age < 13) {
             throw new Error('User must be at least 13 years old');
           }
+        }
+      },
+      // After user is created, create default subjects
+      afterCreate: async (user) => {
+        try {
+          await user.createDefaultSubjects();
+          console.log(`✅ Created default subjects for user: ${user.email}`);
+        } catch (error) {
+          console.error(`❌ Failed to create default subjects for user ${user.email}:`, error);
         }
       }
     }

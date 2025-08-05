@@ -265,6 +265,102 @@ const completeStudySession = async (req, res) => {
       ]
     });
 
+const updateStudySession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { sessionTitle, sessionType, startTime, endTime, location, notes, status } = req.body;
+
+    const session = await StudySession.findOne({
+      where: { 
+        sessionId: id,
+        userId: req.user.userId 
+      }
+    });
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: 'Study session not found'
+      });
+    }
+
+    // Validate status transitions
+    const validTransitions = {
+      'scheduled': ['inProgress', 'cancelled', 'scheduled'],
+      'inProgress': ['completed', 'cancelled'],
+      'completed': [], // No transitions from completed
+      'cancelled': ['scheduled'] // Can reschedule cancelled sessions
+    };
+
+    if (status && !validTransitions[session.status]?.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot change status from ${session.status} to ${status}`
+      });
+    }
+
+    // Update fields with validation
+    const updates = {};
+    if (sessionTitle?.trim()) updates.sessionTitle = sessionTitle.trim();
+    if (sessionType) updates.sessionType = sessionType;
+    if (location !== undefined) updates.location = location;
+    if (notes !== undefined) updates.notes = notes;
+    if (status) updates.status = status;
+
+    // Handle time updates with validation
+    if (startTime || endTime) {
+      const newStartTime = startTime ? new Date(startTime) : session.startTime;
+      const newEndTime = endTime ? new Date(endTime) : session.endTime;
+      
+      // Validate times
+      if (newEndTime <= newStartTime) {
+        return res.status(400).json({
+          success: false,
+          message: 'End time must be after start time'
+        });
+      }
+
+      const duration = Math.round((newEndTime - newStartTime) / (1000 * 60));
+      if (duration < 15) {
+        return res.status(400).json({
+          success: false,
+          message: 'Session must be at least 15 minutes long'
+        });
+      }
+
+      updates.startTime = newStartTime;
+      updates.endTime = newEndTime;
+      updates.durationMinutes = duration;
+    }
+
+    // Apply updates
+    await session.update(updates);
+
+    // Fetch updated session with subject details
+    const updatedSession = await StudySession.findByPk(session.sessionId, {
+      include: [
+        {
+          model: Subject,
+          as: 'subject',
+          attributes: ['subjectName', 'subjectCode', 'colorHex', 'iconEmoji']
+        }
+      ]
+    });
+
+    res.json({
+      success: true,
+      message: 'Study session updated successfully',
+      data: { session: updatedSession }
+    });
+  } catch (error) {
+    console.error('Update session error:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
     res.json({
       success: true,
       message: 'Study session marked as completed',

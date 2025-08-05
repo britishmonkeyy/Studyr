@@ -73,16 +73,27 @@ export const subjectsAPI = {
   getById: (id) => api.get(`/subjects/${id}`),
   update: (id, subjectData) => api.put(`/subjects/${id}`, subjectData),
   delete: (id) => api.delete(`/subjects/${id}`),
+  getStats: () => api.get('/subjects/stats'),
 };
 
-// Sessions API
+// Enhanced Sessions API
 export const sessionsAPI = {
   getAll: () => api.get('/sessions'),
   create: (sessionData) => api.post('/sessions', sessionData),
   getById: (id) => api.get(`/sessions/${id}`),
-  update: (id, sessionData) => api.put(`/sessions/${id}`, sessionData),
+  update: (id, updateData) => {
+    console.log('Updating session:', id, updateData);
+    return api.put(`/sessions/${id}`, updateData);
+  },
   delete: (id) => api.delete(`/sessions/${id}`),
-  complete: (id, data = {}) => api.post(`/sessions/${id}/complete`, data),
+  complete: (id, completionData = {}) => {
+    console.log('Completing session:', id, completionData);
+    return api.post(`/sessions/${id}/complete`, completionData);
+  },
+  // Additional session management methods
+  start: (id) => api.put(`/sessions/${id}`, { status: 'inProgress' }),
+  pause: (id) => api.put(`/sessions/${id}`, { status: 'scheduled' }),
+  cancel: (id) => api.put(`/sessions/${id}`, { status: 'cancelled' }),
 };
 
 // Analytics API
@@ -121,6 +132,50 @@ export const testConnection = async () => {
   } catch (error) {
     console.error('Connection test failed:', error);
     return false;
+  }
+};
+
+// Session management utilities
+export const sessionUtils = {
+  canStart: (session) => {
+    if (!session || session.status !== 'scheduled') return false;
+    
+    const now = new Date();
+    const startTime = new Date(session.startTime);
+    const endTime = new Date(session.endTime);
+    const fifteenMinutesBefore = new Date(startTime.getTime() - 15 * 60 * 1000);
+    
+    return now >= fifteenMinutesBefore && now <= endTime;
+  },
+  
+  isActive: (session) => {
+    return session?.status === 'inProgress';
+  },
+  
+  isOverdue: (session) => {
+    if (!session || session.status !== 'scheduled') return false;
+    const now = new Date();
+    const endTime = new Date(session.endTime);
+    return now > endTime;
+  },
+  
+  formatDuration: (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
+  },
+  
+  getStatusColor: (status) => {
+    const colors = {
+      'scheduled': '#9E9E9E',
+      'inProgress': '#FF9800',
+      'completed': '#4CAF50',
+      'cancelled': '#757575'
+    };
+    return colors[status] || '#9E9E9E';
   }
 };
 

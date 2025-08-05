@@ -39,14 +39,17 @@ import {
   Today,
   EmojiEvents,
   Insights,
-  Analytics
+  Analytics,
+  Pause,
+  Stop
 } from '@mui/icons-material';
 import { sessionsAPI, subjectsAPI, analyticsAPI, removeAuthToken } from '../../services/api';
-import { format, isToday, isTomorrow, parseISO } from 'date-fns';
+import { format, isToday, isTomorrow, parseISO, isWithinInterval, addMinutes } from 'date-fns';
 import CreateSessionModal from './CreateSessionModal';
 import SessionsList from './SessionsList';
 import SubjectManagement from './SubjectManagement';
 import AnalyticsPage from './AnalyticsPage';
+import SessionTimer from './SessionTimer';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -61,6 +64,10 @@ const Dashboard = () => {
   const [showSessionsList, setShowSessionsList] = useState(false);
   const [showSubjectManagement, setShowSubjectManagement] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  
+  // Session Timer States
+  const [activeSession, setActiveSession] = useState(null);
+  const [timerOpen, setTimerOpen] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -79,6 +86,12 @@ const Dashboard = () => {
 
       setSessions(sessionsResponse.data.data.sessions || []);
       setSubjects(subjectsResponse.data.data.subjects || []);
+      
+      // Check for active sessions
+      const activeSessions = (sessionsResponse.data.data.sessions || []).filter(s => s.status === 'inProgress');
+      if (activeSessions.length > 0) {
+        setActiveSession(activeSessions[0]);
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -121,6 +134,14 @@ const Dashboard = () => {
         session.sessionId === updatedSession.sessionId ? updatedSession : session
       )
     );
+    
+    // Update active session tracking
+    if (updatedSession.status === 'inProgress') {
+      setActiveSession(updatedSession);
+    } else if (updatedSession.sessionId === activeSession?.sessionId && updatedSession.status !== 'inProgress') {
+      setActiveSession(null);
+    }
+    
     // Reload analytics when a session is updated/completed
     if (updatedSession.status === 'completed') {
       loadAnalytics();
@@ -129,6 +150,29 @@ const Dashboard = () => {
 
   const handleSessionDelete = (sessionId) => {
     setSessions(prev => prev.filter(session => session.sessionId !== sessionId));
+    if (activeSession?.sessionId === sessionId) {
+      setActiveSession(null);
+    }
+  };
+
+  const handleStartSession = async (session) => {
+    try {
+      const response = await sessionsAPI.update(session.sessionId, { status: 'inProgress' });
+      if (response.data.success) {
+        const updatedSession = response.data.data.session;
+        handleSessionUpdate(updatedSession);
+        setActiveSession(updatedSession);
+        setTimerOpen(true);
+      }
+    } catch (error) {
+      console.error('Failed to start session:', error);
+    }
+  };
+
+  const handleOpenTimer = () => {
+    if (activeSession) {
+      setTimerOpen(true);
+    }
   };
 
   if (loading) {
@@ -195,24 +239,25 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#fafafa', minHeight: '100vh' }}>
-      {/* Clean App Bar */}
+      {/* Enhanced App Bar with Active Session Indicator */}
       <AppBar 
         position="sticky" 
         elevation={0} 
         sx={{ 
-          bgcolor: 'white',
-          color: '#202124',
-          borderBottom: '1px solid #e0e0e0'
+          bgcolor: activeSession ? '#ff6b35' : 'white',
+          color: activeSession ? 'white' : '#202124',
+          borderBottom: '1px solid #e0e0e0',
+          transition: 'all 0.3s ease'
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <School sx={{ mr: 2, color: '#1a73e8', fontSize: 28 }} />
+            <School sx={{ mr: 2, color: activeSession ? 'white' : '#1a73e8', fontSize: 28 }} />
             <Typography 
               variant="h6" 
               sx={{ 
                 fontWeight: 400,
-                color: '#202124',
+                color: activeSession ? 'white' : '#202124',
                 cursor: 'pointer',
                 fontFamily: '"Google Sans", Roboto, sans-serif'
               }}
@@ -228,7 +273,7 @@ const Dashboard = () => {
               variant="body2" 
               sx={{ 
                 ml: 2,
-                color: '#5f6368',
+                color: activeSession ? 'rgba(255,255,255,0.9)' : '#5f6368',
                 fontWeight: 500
               }}
             >
@@ -237,14 +282,35 @@ const Dashboard = () => {
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Active Session Timer Button */}
+            {activeSession && (
+              <Button
+                variant="outlined"
+                startIcon={<Timer />}
+                onClick={handleOpenTimer}
+                sx={{
+                  borderColor: 'rgba(255,255,255,0.5)',
+                  color: 'white',
+                  '&:hover': {
+                    borderColor: 'white',
+                    bgcolor: 'rgba(255,255,255,0.1)'
+                  },
+                  mr: 2,
+                  animation: 'pulse 2s infinite'
+                }}
+              >
+                Session Active
+              </Button>
+            )}
+            
             <IconButton size="small">
               <Badge badgeContent={2} color="error" variant="dot">
-                <Notifications sx={{ color: '#5f6368' }} />
+                <Notifications sx={{ color: activeSession ? 'white' : '#5f6368' }} />
               </Badge>
             </IconButton>
             
             <IconButton size="small">
-              <Settings sx={{ color: '#5f6368' }} />
+              <Settings sx={{ color: activeSession ? 'white' : '#5f6368' }} />
             </IconButton>
             
             <IconButton onClick={handleMenuOpen} size="small">
@@ -288,6 +354,15 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
 
+      {/* Add CSS for pulse animation */}
+      <style jsx>{`
+        @keyframes pulse {
+          0% { opacity: 1; }
+          50% { opacity: 0.7; }
+          100% { opacity: 1; }
+        }
+      `}</style>
+
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ py: 3 }}>
         {showAnalytics ? (
@@ -300,9 +375,38 @@ const Dashboard = () => {
             onSessionUpdate={handleSessionUpdate}
             onSessionDelete={handleSessionDelete}
             onCreateSession={() => setCreateModalOpen(true)}
+            onStartTimer={(session) => {
+              setActiveSession(session);
+              setTimerOpen(true);
+            }}
           />
         ) : (
           <>
+            {/* Active Session Alert */}
+            {activeSession && (
+              <Alert 
+                severity="info" 
+                sx={{ 
+                  mb: 3, 
+                  bgcolor: '#fff3e0',
+                  border: '1px solid #ff9800',
+                  '& .MuiAlert-icon': { color: '#ff9800' }
+                }}
+                action={
+                  <Button 
+                    color="inherit" 
+                    size="small" 
+                    startIcon={<Timer />}
+                    onClick={handleOpenTimer}
+                  >
+                    Open Timer
+                  </Button>
+                }
+              >
+                <strong>{activeSession.sessionTitle}</strong> is currently in progress
+              </Alert>
+            )}
+
             {/* Welcome Header */}
             <Box sx={{ mb: 4 }}>
               <Typography 
@@ -508,10 +612,10 @@ const Dashboard = () => {
                             display: 'flex',
                             alignItems: 'center',
                             p: 2,
-                            bgcolor: '#f8f9fa',
+                            bgcolor: session.status === 'inProgress' ? '#fff3e0' : '#f8f9fa',
                             borderRadius: 2,
                             mb: 1,
-                            border: '1px solid #e0e0e0'
+                            border: `1px solid ${session.status === 'inProgress' ? '#ff9800' : '#e0e0e0'}`
                           }}
                         >
                           <Box
@@ -531,13 +635,27 @@ const Dashboard = () => {
                               {session.subject?.subjectName} • {format(parseISO(session.startTime), 'h:mm a')}
                             </Typography>
                           </Box>
-                          {session.status === 'scheduled' && (
+                          {session.status === 'scheduled' && isWithinInterval(new Date(), { 
+                            start: addMinutes(parseISO(session.startTime), -15), 
+                            end: parseISO(session.endTime) 
+                          }) && (
                             <Button
                               size="small"
                               startIcon={<PlayArrow />}
+                              onClick={() => handleStartSession(session)}
                               sx={{ color: '#1a73e8', textTransform: 'none' }}
                             >
                               Start
+                            </Button>
+                          )}
+                          {session.status === 'inProgress' && (
+                            <Button
+                              size="small"
+                              startIcon={<Timer />}
+                              onClick={handleOpenTimer}
+                              sx={{ color: '#ff9800', textTransform: 'none' }}
+                            >
+                              Timer
                             </Button>
                           )}
                         </Box>
@@ -687,6 +805,14 @@ const Dashboard = () => {
           open={createModalOpen}
           onClose={() => setCreateModalOpen(false)}
           onSessionCreated={handleSessionCreated}
+        />
+
+        {/* Session Timer Modal */}
+        <SessionTimer
+          session={activeSession}
+          open={timerOpen}
+          onClose={() => setTimerOpen(false)}
+          onSessionUpdate={handleSessionUpdate}
         />
       </Container>
     </Box>
