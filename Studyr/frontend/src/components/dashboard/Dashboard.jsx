@@ -41,15 +41,20 @@ import {
   Insights,
   Analytics,
   Pause,
-  Stop
+  Stop,
+  People,
+  Message
 } from '@mui/icons-material';
 import { sessionsAPI, subjectsAPI, analyticsAPI, removeAuthToken } from '../../services/api';
 import { format, isToday, isTomorrow, parseISO, isWithinInterval, addMinutes } from 'date-fns';
+import { studyPartnersAPI, messagesAPI } from '../../services/api';
 import CreateSessionModal from './CreateSessionModal';
 import SessionsList from './SessionsList';
 import SubjectManagement from './SubjectManagement';
 import AnalyticsPage from './AnalyticsPage';
 import SessionTimer from './SessionTimer';
+import StudyPartnersPage from '../social/StudyPartnersPage';
+import MessagesPage from '../social/MessagesPage';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -64,6 +69,14 @@ const Dashboard = () => {
   const [showSessionsList, setShowSessionsList] = useState(false);
   const [showSubjectManagement, setShowSubjectManagement] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showStudyPartners, setShowStudyPartners] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [selectedPartnerForChat, setSelectedPartnerForChat] = useState(null);
+  const [socialStats, setSocialStats] = useState({
+  partnersCount: 0,
+  unreadMessages: 0,
+  pendingRequests: 0
+});
   
   // Session Timer States
   const [activeSession, setActiveSession] = useState(null);
@@ -72,6 +85,7 @@ const Dashboard = () => {
   useEffect(() => {
     loadDashboardData();
     loadAnalytics();
+    loadSocialStats();
   }, []);
 
   const loadDashboardData = async () => {
@@ -175,6 +189,24 @@ const Dashboard = () => {
     }
   };
 
+  const loadSocialStats = async () => {
+  try {
+    const [partnersResponse, requestsResponse, messagesResponse] = await Promise.all([
+      studyPartnersAPI.getAccepted(),
+      studyPartnersAPI.getRequests(),
+      messagesAPI.getStats()
+    ]);
+
+    setSocialStats({
+      partnersCount: partnersResponse.data.data.partners?.length || 0,
+      unreadMessages: messagesResponse.data.data.unreadCount || 0,
+      pendingRequests: requestsResponse.data.data.receivedRequests?.filter(r => r.status === 'pending').length || 0
+    });
+  } catch (error) {
+    console.error('Failed to load social stats:', error);
+  }
+};
+
   if (loading) {
     return (
       <Box sx={{ width: '100%', mt: 2 }}>
@@ -218,6 +250,8 @@ const Dashboard = () => {
     if (showAnalytics) return 'Analytics';
     if (showSubjectManagement) return 'Subjects';
     if (showSessionsList) return 'Sessions';
+    if (showStudyPartners) return 'Study Partners';
+    if (showMessages) return 'Messages';             
     return 'Dashboard';
   };
 
@@ -365,7 +399,28 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ py: 3 }}>
-        {showAnalytics ? (
+      {showStudyPartners ? (
+        <StudyPartnersPage 
+          onBack={() => {
+            setShowStudyPartners(false);
+            loadSocialStats();
+          }}
+          onStartChat={(partner) => {
+            setSelectedPartnerForChat(partner);
+            setShowStudyPartners(false);
+            setShowMessages(true);
+          }}
+        />
+      ) : showMessages ? (
+        <MessagesPage 
+          onBack={() => {
+            setShowMessages(false);
+            setSelectedPartnerForChat(null);
+            loadSocialStats();
+          }}
+          selectedPartner={selectedPartnerForChat}
+        />
+        ) : showAnalytics ? (
           <AnalyticsPage onBack={() => setShowAnalytics(false)} />
         ) : showSubjectManagement ? (
           <SubjectManagement onBack={() => setShowSubjectManagement(false)} />
@@ -719,6 +774,44 @@ const Dashboard = () => {
             </Grid>
 
             {/* Quick Actions */}
+            <Button
+              variant="outlined"
+              startIcon={<People />}
+              onClick={() => setShowStudyPartners(true)}
+              sx={{
+                borderColor: '#dadce0',
+                color: '#202124',
+                textTransform: 'none',
+                fontWeight: 500,
+                borderRadius: 2,
+                '&:hover': {
+                  bgcolor: '#f8f9fa',
+                  borderColor: '#1a73e8'
+                }
+              }}
+            >
+              Study Partners
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<Message />}
+              onClick={() => setShowMessages(true)}
+              sx={{
+                borderColor: '#dadce0',
+                color: '#202124',
+                textTransform: 'none',
+                fontWeight: 500,
+                borderRadius: 2,
+                '&:hover': {
+                  bgcolor: '#f8f9fa',
+                  borderColor: '#1a73e8'
+                }
+              }}
+            >
+              Messages
+            </Button>
+
             <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'center' }}>
               <Button
                 variant="contained"

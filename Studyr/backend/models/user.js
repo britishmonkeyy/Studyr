@@ -28,6 +28,33 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId',
         as: 'analytics'
       });
+        // Messages sent
+      User.hasMany(models.Message, {
+        foreignKey: 'senderId',
+        as: 'sentMessages'
+      });
+        // Messages received
+      User.hasMany(models.Message, {
+        foreignKey: 'recipientId',
+        as: 'receivedMessages'
+      });
+
+      // Partnership requests sent
+      User.hasMany(models.StudyPartner, {
+        foreignKey: 'requesterId',
+        as: 'sentPartnerRequests'
+      });
+
+      // Partnership requests received
+      User.hasMany(models.StudyPartner, {
+        foreignKey: 'recipientId',
+        as: 'receivedPartnerRequests'
+      });
+        // Session partnerships
+      User.hasMany(models.PartnerSession, {
+        foreignKey: 'partnerId',
+        as: 'sessionInvitations'
+      });
     }
 
     // Instance method to check password

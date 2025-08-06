@@ -15,12 +15,11 @@ static associate(models) {
     foreignKey: 'subjectId',
     as: 'subject'
   });
-
-  // Removed the StudyPlan association for now since i don't have that model yet
-  // StudySession.belongsTo(models.StudyPlan, {
-  //   foreignKey: 'planId',
-  //   as: 'studyPlan'
-  // });
+  // Session partners
+  StudySession.hasMany(models.PartnerSession, {
+    foreignKey: 'sessionId',
+    as: 'partners'
+  });
 }
 
     // Calculate duration from start and end times
@@ -109,15 +108,6 @@ static associate(models) {
         key: 'subject_id'
       }
     },
-  //  planId: {
-  //    type: DataTypes.UUID,
-  //    allowNull: true,
-  //    field: 'plan_id',
-  //    references: {
-  //      model: 'study_plans',
-  //      key: 'plan_id'
-  //    }
-  //  },
     sessionTitle: {
       type: DataTypes.STRING(200),
       allowNull: false,

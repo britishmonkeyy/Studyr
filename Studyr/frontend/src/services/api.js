@@ -2,20 +2,20 @@ import axios from 'axios';
 
 // Dynamic API base URL configuration
 const getApiBaseUrl = () => {
-  // Use environment variable if available
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL;
   }
   
-  // Check if we're in development and get the current host
   const hostname = window.location.hostname;
+  console.log('🔍 API Debug - Hostname:', hostname);
   
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    // Local development
+    console.log('🔍 Using localhost API');
     return 'http://localhost:5000/api';
   } else {
-    // Network access - use the same IP as the frontend but with backend port
-    return `http://${hostname}:5000/api`;
+    const networkUrl = `http://${hostname}:5000/api`;
+    console.log('🔍 Using network API:', networkUrl);
+    return networkUrl;
   }
 };
 
@@ -177,6 +177,59 @@ export const sessionUtils = {
     };
     return colors[status] || '#9E9E9E';
   }
+};
+// Study Partners API
+export const studyPartnersAPI = {
+  // Get partnership requests (sent and received)
+  getRequests: () => api.get('/partners/requests'),
+  
+  // Get accepted study partners
+  getAccepted: () => api.get('/partners/accepted'),
+  
+  // Search for potential study partners
+  search: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    if (params.q) searchParams.append('q', params.q);
+    if (params.studyLevel) searchParams.append('studyLevel', params.studyLevel);
+    if (params.subject) searchParams.append('subject', params.subject);
+    
+    return api.get(`/partners/search?${searchParams}`);
+  },
+  
+  // Send partnership request
+  sendRequest: (recipientId, requestMessage) => 
+    api.post('/partners/request', { recipientId, requestMessage }),
+  
+  // Respond to partnership request
+  respond: (partnershipId, response) => 
+    api.put(`/partners/${partnershipId}/respond`, { response }),
+  
+  // Remove partnership
+  remove: (partnershipId, action = 'remove') => 
+    api.delete(`/partners/${partnershipId}`, { data: { action } })
+};
+
+// Messages API
+export const messagesAPI = {
+  // Get conversations list
+  getConversations: () => api.get('/messages/conversations'),
+  
+  // Get messages with specific partner
+  getWithPartner: (partnerId, page = 1, limit = 50) => 
+    api.get(`/messages/${partnerId}?page=${page}&limit=${limit}`),
+  
+  // Send message
+  send: (recipientId, messageText, messageType = 'text') => 
+    api.post('/messages', { recipientId, messageText, messageType }),
+  
+  // Mark messages as read
+  markAsRead: (partnerId) => api.put(`/messages/${partnerId}/read`),
+  
+  // Delete message
+  delete: (messageId) => api.delete(`/messages/${messageId}`),
+  
+  // Get message statistics
+  getStats: () => api.get('/messages/stats')
 };
 
 export default api;

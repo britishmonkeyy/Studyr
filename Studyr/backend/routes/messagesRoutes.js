@@ -1,94 +1,34 @@
-const router = require('express').Router();
-const { Message, User } = require('../models');
-const auth = require('../middleware/auth');
+const express = require('express');
+const router = express.Router();
+const { authenticateToken } = require('../middleware/authMiddleware');
+const {
+  getConversations,
+  getMessagesWithPartner,
+  sendMessage,
+  markMessagesAsRead,
+  deleteMessage,
+  getMessageStats
+} = require('../controllers/messagesController');
 
-// Get conversations list
-router.get('/conversations', auth, async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    
-    // Get unique conversations
-    const conversations = await sequelize.query(`
-      SELECT DISTINCT ON (other_user_id) 
-        CASE 
-          WHEN sender_id = :userId THEN recipient_id 
-          ELSE sender_id 
-        END as other_user_id,
-        m.*,
-        u.username,
-        u.profile_picture_url
-      FROM messages m
-      JOIN users u ON u.user_id = CASE 
-        WHEN m.sender_id = :userId THEN m.recipient_id 
-        ELSE m.sender_id 
-      END
-      WHERE :userId IN (sender_id, recipient_id)
-      ORDER BY other_user_id, created_at DESC
-    `, {
-      replacements: { userId },
-      type: QueryTypes.SELECT
-    });
+// All routes require authentication
+router.use(authenticateToken);
 
-    res.json(conversations);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// GET /api/messages/conversations - Get list of conversations
+router.get('/conversations', getConversations);
 
-// Get messages with specific user
-router.get('/messages/:partnerId', auth, async (req, res) => {
-  try {
-    const { partnerId } = req.params;
-    const userId = req.user.userId;
+// GET /api/messages/stats - Get message statistics
+router.get('/stats', getMessageStats);
 
-    const messages = await Message.findAll({
-      where: {
-        [Op.or]: [
-          { senderId: userId, recipientId: partnerId },
-          { senderId: partnerId, recipientId: userId }
-        ]
-      },
-      order: [['createdAt', 'ASC']],
-      include: [{
-        model: User,
-        as: 'sender',
-        attributes: ['username', 'profilePictureUrl']
-      }]
-    });
+// GET /api/messages/:partnerId - Get messages with specific partner
+router.get('/:partnerId', getMessagesWithPartner);
 
-    // Mark messages as read
-    await Message.update(
-      { isRead: true, readAt: new Date() },
-      {
-        where: {
-          senderId: partnerId,
-          recipientId: userId,
-          isRead: false
-        }
-      }
-    );
+// POST /api/messages - Send a message
+router.post('/', sendMessage);
 
-    res.json(messages);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// PUT /api/messages/:partnerId/read - Mark messages as read
+router.put('/:partnerId/read', markMessagesAsRead);
 
-// Send message
-router.post('/messages', auth, async (req, res) => {
-  try {
-    const { recipientId, messageText } = req.body;
-    
-    const message = await Message.create({
-      senderId: req.user.userId,
-      recipientId,
-      messageText
-    });
-
-    res.json(message);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// DELETE /api/messages/:messageId - Delete a message
+router.delete('/:messageId', deleteMessage);
 
 module.exports = router;

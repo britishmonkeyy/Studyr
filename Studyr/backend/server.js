@@ -6,6 +6,9 @@ const authRoutes = require('./routes/authRoutes');
 const subjectRoutes = require('./routes/subjectRoutes');
 const studySessionRoutes = require('./routes/studySessionRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const studyPartnersRoutes = require('./routes/studyPartnersRoutes');
+const messagesRoutes = require('./routes/messagesRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,15 +22,20 @@ app.use('/api/auth', authRoutes);
 app.use('/api/sessions', studySessionRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/partners', studyPartnersRoutes);
+app.use('/api/messages', messagesRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server working!' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Test: http://localhost:${PORT}/api/auth/test`);
+  console.log(`📍 Local access: http://localhost:${PORT}/api/health`);
+  console.log(`📍 Network access: http://10.13.2.231:${PORT}/api/health`);
+  console.log(`📍 Frontend local: http://localhost:3000`);
+  console.log(`📍 Frontend network: http://10.13.2.231:3000`);
 });
 
 // temp route for table checks
