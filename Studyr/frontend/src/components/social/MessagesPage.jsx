@@ -349,15 +349,6 @@ const sendMessage = async () => {
                 @{selectedConversation.partner.username}
               </Typography>
             </Box>
-            <IconButton>
-              <Phone />
-            </IconButton>
-            <IconButton>
-              <VideoCall />
-            </IconButton>
-            <IconButton>
-              <MoreVert />
-            </IconButton>
           </Toolbar>
         </AppBar>
 

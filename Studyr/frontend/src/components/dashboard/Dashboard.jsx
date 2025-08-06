@@ -337,15 +337,6 @@ const Dashboard = () => {
               </Button>
             )}
             
-            <IconButton size="small">
-              <Badge badgeContent={2} color="error" variant="dot">
-                <Notifications sx={{ color: activeSession ? 'white' : '#5f6368' }} />
-              </Badge>
-            </IconButton>
-            
-            <IconButton size="small">
-              <Settings sx={{ color: activeSession ? 'white' : '#5f6368' }} />
-            </IconButton>
             
             <IconButton onClick={handleMenuOpen} size="small">
               <Avatar sx={{ 
@@ -374,11 +365,6 @@ const Dashboard = () => {
                   {user?.email}
                 </Typography>
               </Box>
-              <MenuItem onClick={handleMenuClose}>
-                <AccountCircle sx={{ mr: 2 }} />
-                Manage account
-              </MenuItem>
-              <Divider />
               <MenuItem onClick={handleLogout}>
                 <Logout sx={{ mr: 2 }} />
                 Sign out

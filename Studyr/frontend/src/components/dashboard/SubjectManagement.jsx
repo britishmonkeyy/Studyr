@@ -179,16 +179,6 @@ const SubjectManagement = ({ onBack }) => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, color: '#45B7D1', mb: 1 }}>
-              {subjects.filter(s => s.subjectCode).length}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              With Codes
-            </Typography>
-          </Paper>
-        </Grid>
       </Grid>
 
       {/* Subjects Grid */}
