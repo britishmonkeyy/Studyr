@@ -271,10 +271,7 @@ const SessionTimer = ({ session, open, onClose, onSessionUpdate }) => {
         {timeRemaining === 0 && (
           <Paper sx={{ p: 2, mb: 3, bgcolor: 'rgba(76, 175, 80, 0.2)', borderRadius: 2 }}>
             <Typography variant="h6" sx={{ color: '#4CAF50', mb: 1 }}>
-              🎉 Session Complete!
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              Great job on completing your study session!
+              Session Complete!
             </Typography>
           </Paper>
         )}

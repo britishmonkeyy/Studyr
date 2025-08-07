@@ -5,7 +5,7 @@ module.exports = {
     // Add user_id column to existing subjects table
     await queryInterface.addColumn('subjects', 'user_id', {
       type: Sequelize.UUID,
-      allowNull: true, // Initially allow null for existing records
+      allowNull: true, // Initially allowing null for existing records
       references: {
         model: 'users',
         key: 'user_id'
@@ -28,18 +28,6 @@ module.exports = {
       );
     }
 
-
-    // Now make user_id required (comment this out if you have existing subjects without user_id)
-    // await queryInterface.changeColumn('subjects', 'user_id', {
-    //   type: Sequelize.UUID,
-    //   allowNull: false,
-    //   references: {
-    //     model: 'users',
-    //     key: 'user_id'
-    //   },
-    //   onUpdate: 'CASCADE',
-    //   onDelete: 'CASCADE'
-    // });
   },
 
   async down(queryInterface, Sequelize) {

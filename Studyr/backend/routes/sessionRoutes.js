@@ -30,7 +30,6 @@ router.post('/sessions', auth, async (req, res) => {
       await PartnerSession.bulkCreate(partnerInvites);
 
       // Send notifications to invited partners
-      // We'll implement this next
     }
 
     res.json({ session, invitedPartners: partnerIds });

@@ -20,7 +20,6 @@ import {
   CircularProgress,
   Badge,
   IconButton,
-  Divider,
   Paper
 } from '@mui/material';
 import {
@@ -28,14 +27,12 @@ import {
   PersonAdd,
   Inbox,
   Send,
-  Chat,
   Search,
   Check,
   Close,
   Block,
   ArrowBack,
   FiberManualRecord,
-  School,
   Message
 } from '@mui/icons-material';
 import { studyPartnersAPI } from '../../services/api';

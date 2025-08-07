@@ -7,10 +7,10 @@ const getApiBaseUrl = () => {
   }
   
   const hostname = window.location.hostname;
-  console.log('🔍 API Debug - Hostname:', hostname);
+  console.log('API Debug - Hostname:', hostname);
   
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    console.log('🔍 Using localhost API');
+    console.log('Using localhost API');
     return 'http://localhost:5000/api';
   } else {
     const networkUrl = `http://${hostname}:5000/api`;

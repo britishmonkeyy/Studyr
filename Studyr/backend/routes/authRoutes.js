@@ -11,7 +11,7 @@ router.get('/profile', authenticateToken, getUserProfile);
 
 // Test route
 router.get('/status', (req, res) => {
-  res.json({ message: 'Full auth system ready!' });
+  res.json({ message: 'Full auth system ready' });
 });
 
 module.exports = router;

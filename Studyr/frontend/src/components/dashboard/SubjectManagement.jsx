@@ -29,10 +29,7 @@ import {
   MoreVert,
   Edit,
   Delete,
-  Palette,
-  EmojiEmotions,
   Save,
-  Cancel,
   School
 } from '@mui/icons-material';
 import { subjectsAPI } from '../../services/api';
@@ -198,7 +195,7 @@ const SubjectManagement = ({ onBack }) => {
             No subjects created yet
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Create your first subject to start organizing your study sessions
+            Create your first subject
           </Typography>
           <Button
             variant="contained"

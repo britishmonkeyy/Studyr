@@ -38,7 +38,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📍 Frontend network: http://10.13.2.231:3000`);
 });
 
-// temp route for table checks
+// Temp route for table checks
 /*app.get('/api/debug/check-tables', async (req, res) => {
   try {
     const { sequelize } = require('./models');
