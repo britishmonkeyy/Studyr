@@ -1,3 +1,9 @@
+/*
+Module Name: Dashboard Page
+Module Author: Adam Bolton
+Date Modified: 6/08/2025
+Description: This is the dashboard containing most of the components that are used on the main page of Studyr
+*/
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

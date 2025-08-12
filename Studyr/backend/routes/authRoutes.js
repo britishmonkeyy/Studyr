@@ -1,3 +1,9 @@
+/*
+Module Name: Authentication Routing
+Module Author: Adam Bolton
+Date Modified: 8/08/2025
+Description: This handles user authentication endpoints including registration, login, profile access, and system status.
+*/
 const express = require('express');
 const { registerUser, loginUser, getUserProfile } = require('../controllers/userController');
 const { authenticateToken, validateRegistration, validateLogin } = require('../middleware/authMiddleware');

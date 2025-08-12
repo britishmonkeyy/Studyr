@@ -1,3 +1,9 @@
+/*
+Module Name: Authentication Middleware
+Module Author: Adam Bolton
+Date Modified: 8/08/2025
+Description: This modulates and checks if the user is currently logged in using a bearer token recieved when they login
+*/
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 

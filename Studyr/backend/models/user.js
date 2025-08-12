@@ -1,3 +1,9 @@
+/*
+Module Name: User Modelling
+Module Author: Adam Bolton
+Date Modified:
+Description:
+*/
 'use strict';
 const { Model } = require('sequelize');
 const bcrypt = require('bcryptjs');
@@ -102,7 +108,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    // Create default subjects for new user
+    // Create default subjects for new user (Doesn't work currently?)
     async createDefaultSubjects() {
       const { Subject } = require('./subject');
       
@@ -265,9 +271,9 @@ module.exports = (sequelize, DataTypes) => {
       afterCreate: async (user) => {
         try {
           await user.createDefaultSubjects();
-          console.log(`✅ Created default subjects for user: ${user.email}`);
+          console.log(`Created default subjects for user: ${user.email}`);
         } catch (error) {
-          console.error(`❌ Failed to create default subjects for user ${user.email}:`, error);
+          console.error(`Failed to create default subjects for user ${user.email}:`, error);
         }
       }
     }

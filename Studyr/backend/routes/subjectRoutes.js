@@ -1,3 +1,9 @@
+/*
+Module Name: Subject Routing
+Module Author: Adam Bolton
+Date Modified: 8/08/2025
+Description: Does CRUD operations for subject management. This handles creation, retrieval, updating, and deletion of subjects with statistics endpoint.
+*/
 const express = require('express');
 const { 
   getAllSubjects, 

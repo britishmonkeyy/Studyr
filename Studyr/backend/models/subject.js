@@ -1,3 +1,9 @@
+/*
+Module Name: Subject Modelling
+Module Author: Adam Bolton
+Date Modified:
+Description:
+*/
 'use strict';
 const { Model } = require('sequelize');
 
@@ -90,6 +96,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'other'
     },
+       /* category: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: 'other'
+    }, */
     colorHex: {
       type: DataTypes.STRING(7),
       allowNull: false,
