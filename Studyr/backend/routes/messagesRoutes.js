@@ -1,3 +1,9 @@
+/*
+Module Name: Messages Routes
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Express routing for messaging system including conversation management, message sending/receiving, read status updates, and message statistics
+*/
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/authMiddleware');

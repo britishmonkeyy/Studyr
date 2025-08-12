@@ -1,3 +1,9 @@
+/*
+Module Name: Application Entry Point
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React application initialization with root rendering, strict mode configuration, and performance monitoring setup for production deployment
+*/
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

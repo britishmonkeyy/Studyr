@@ -1,3 +1,9 @@
+/*
+Module Name: Study Partners Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating study partners table with partnership requests, status management, and unique partnership constraints
+*/
 'use strict';
 
 module.exports = {

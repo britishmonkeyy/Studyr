@@ -1,5 +1,11 @@
+/*
+Module Name: Study Session Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating study sessions table with timing, status tracking, recurring sessions, and foreign key relationships
+*/
 'use strict';
-// Migration to db file
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('study_sessions', {

@@ -1,3 +1,9 @@
+/*
+Module Name: User Analytics Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating user analytics table with daily metrics, productivity tracking, and subject distribution analysis
+*/
 'use strict';
 
 module.exports = {

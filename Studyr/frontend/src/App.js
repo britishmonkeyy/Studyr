@@ -1,3 +1,9 @@
+/*
+Module Name: Main Application Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React application root with routing configuration, theme setup, authentication guards, and Material-UI integration for consistent user experience
+*/
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';

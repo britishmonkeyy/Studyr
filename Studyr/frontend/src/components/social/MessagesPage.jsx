@@ -1,3 +1,9 @@
+/*
+Module Name: Messages Page Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for real-time messaging interface with conversation management, message threading, read status tracking, and partner communication
+*/
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,

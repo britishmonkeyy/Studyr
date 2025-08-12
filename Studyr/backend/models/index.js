@@ -1,3 +1,9 @@
+/*
+Module Name: Database Models Index
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize models configuration and association setup for database and relationship management across all applications
+*/
 'use strict';
 
 const fs = require('fs');

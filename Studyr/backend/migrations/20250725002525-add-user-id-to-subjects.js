@@ -1,3 +1,9 @@
+/*
+Module Name: Subject User Association Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for adding user_id foreign key to subjects table enabling user-specific subject management and data isolation
+*/
 'use strict';
 
 module.exports = {

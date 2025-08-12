@@ -1,8 +1,8 @@
 /*
-Module Name: User Modelling
+Module Name: User Model
 Module Author: Adam Bolton
-Date Modified:
-Description:
+Date Modified: 12/08/2025
+Description: Sequelize model for user accounts with authentication, profile management, study level tracking, and associated relationships to sessions and subjects
 */
 'use strict';
 const { Model } = require('sequelize');
@@ -273,7 +273,7 @@ module.exports = (sequelize, DataTypes) => {
           await user.createDefaultSubjects();
           console.log(`Created default subjects for user: ${user.email}`);
         } catch (error) {
-          console.error(`Failed to create default subjects for user ${user.email}:`, error);
+          console.error(`Failed to create default subjects for user ${user.email}:`, error); // <- currently recieving this error
         }
       }
     }

@@ -1,3 +1,9 @@
+/*
+Module Name: Study Partner Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for study partnership relationships including request/response management, partnership status tracking, and user connections
+*/
 'use strict';
 const { Model } = require('sequelize');
 

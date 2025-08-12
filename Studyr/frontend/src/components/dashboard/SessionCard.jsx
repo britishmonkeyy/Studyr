@@ -1,3 +1,9 @@
+/*
+Module Name: Session Card Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for individual session display with status indicators, action buttons, time formatting, and interactive session management
+*/
 import React, { useState } from 'react';
 import {
   Card,

@@ -1,3 +1,9 @@
+/*
+Module Name: Study Streak Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating study streaks table with current/longest streak tracking, study time accumulation, and user associations
+*/
 'use strict';
 
 module.exports = {

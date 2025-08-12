@@ -1,4 +1,10 @@
-
+/*
+Module Name: Session Invite Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for inviting study partners to collaborative sessions with partner selection, invitation management, and notification handling
+Disclaimer: UNUSED COMPONENT IMPLEMENTATION TBD
+*/
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 

@@ -1,3 +1,9 @@
+/*
+Module Name: Productivity Rating Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for adding productivity rating field to study sessions table with validation constraints and rating scale
+*/
 'use strict';
 
 module.exports = {

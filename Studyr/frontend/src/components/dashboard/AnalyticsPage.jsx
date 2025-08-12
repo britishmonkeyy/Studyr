@@ -1,3 +1,9 @@
+/*
+Module Name: Analytics Dashboard Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for comprehensive analytics visualization including charts, streak tracking, productivity metrics, and timeframe filtering
+*/
 import React, { useState, useEffect } from 'react';
 import {
   Box,

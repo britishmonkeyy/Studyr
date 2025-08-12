@@ -1,3 +1,9 @@
+/*
+Module Name: Subject Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating subjects table with user associations, categorization, customization options, and indexing for performance
+*/
 'use strict';
 
 module.exports = {

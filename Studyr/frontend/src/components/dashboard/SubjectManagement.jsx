@@ -1,3 +1,9 @@
+/*
+Module Name: Subject Management Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for subject CRUD operations with color/emoji selection, category management, preview functionality, and statistics display
+*/
 import React, { useState, useEffect } from 'react';
 import {
   Box,

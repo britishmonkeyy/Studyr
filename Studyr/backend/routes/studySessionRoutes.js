@@ -1,3 +1,9 @@
+/*
+Module Name: Study Session Routes
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Express routing for study session CRUD operations including creation, retrieval, updates, deletion, and session completion tracking
+*/
 const express = require('express');
 const {
   getUserStudySessions,

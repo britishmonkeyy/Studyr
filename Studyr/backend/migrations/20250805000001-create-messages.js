@@ -1,3 +1,9 @@
+/*
+Module Name: Messages Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating messages table with sender/recipient relationships, read status tracking, and message type classification
+*/
 'use strict';
 
 module.exports = {

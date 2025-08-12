@@ -1,3 +1,9 @@
+/*
+Module Name: User Analytics Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for storing daily user analytics including study time, session counts, productivity ratings, and subject distribution tracking
+*/
 'use strict';
 const { Model, Op } = require('sequelize');
 

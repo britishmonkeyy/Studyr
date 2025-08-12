@@ -1,3 +1,9 @@
+/*
+Module Name: User Controller
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Handles user authentication operations including registration, login, profile management, and JWT token generation for secure access
+*/
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 

@@ -1,3 +1,9 @@
+/*
+Module Name: Study Partners Page Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for study partner management with search functionality, partnership requests, status tracking, and social interaction features
+*/
 import React, { useState, useEffect } from 'react';
 import {
   Box,

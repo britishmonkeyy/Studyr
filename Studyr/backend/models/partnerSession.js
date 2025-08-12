@@ -1,3 +1,10 @@
+/*
+Module Name: Partner Session Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for managing study session partnerships including invitation status, acceptance tracking, and session collaboration features
+Disclaimer: CURRENTLY UNUSED MODEL AS OF 12/08/2025
+*/
 'use strict';
 const { Model } = require('sequelize');
 

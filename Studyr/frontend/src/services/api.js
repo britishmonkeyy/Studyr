@@ -1,3 +1,9 @@
+/*
+Module Name: API Service Layer
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Axios-based API service with authentication handling, error interceptors, dynamic URL configuration, and comprehensive endpoint management
+*/
 import axios from 'axios';
 
 // Dynamic API base URL configuration

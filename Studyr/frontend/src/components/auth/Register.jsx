@@ -1,3 +1,9 @@
+/*
+Module Name: Registration Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React multi-step registration component with form validation, date picker integration, study level selection, and progressive user onboarding
+*/
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { enAU } from 'date-fns/locale';

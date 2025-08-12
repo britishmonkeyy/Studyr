@@ -1,3 +1,9 @@
+/*
+Module Name: Create Session Modal Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React modal component for study session creation with subject selection, time management, session type configuration, and form validation
+*/
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

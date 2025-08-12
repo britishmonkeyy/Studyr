@@ -1,3 +1,9 @@
+/*
+Module Name: User Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating users table with authentication fields, profile information, study levels, and performance indexes
+*/
 'use strict';
 
 module.exports = {

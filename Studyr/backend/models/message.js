@@ -1,3 +1,9 @@
+/*
+Module Name: Message Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for messaging system with sender/recipient relationships, read status tracking, and message type classification
+*/
 'use strict';
 const { Model } = require('sequelize');
 

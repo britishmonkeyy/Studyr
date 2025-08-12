@@ -1,3 +1,9 @@
+/*
+Module Name: Session Routes (Partner Integration)
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Express routing for study session creation with partner invitation functionality and collaborative session management
+*/
 router.post('/sessions', auth, async (req, res) => {
   try {
     const { 

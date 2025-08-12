@@ -1,3 +1,10 @@
+/*
+Module Name: Partner Sessions Table Migration
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Database migration for creating partner sessions table enabling collaborative study sessions with invitation and participation tracking
+Disclaimer: CURRENTLY UNUSED MIGRATION TABLE IMPLEMENTATION TBD
+*/
 'use strict';
 
 module.exports = {

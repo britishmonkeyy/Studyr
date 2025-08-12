@@ -1,3 +1,9 @@
+/*
+Module Name: Study Streak Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for tracking user study streaks including current/longest streak calculation, milestone tracking, and total study time accumulation
+*/
 'use strict';
 const { Model } = require('sequelize');
 

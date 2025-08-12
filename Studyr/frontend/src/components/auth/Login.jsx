@@ -1,3 +1,9 @@
+/*
+Module Name: Login Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for user authentication with form validation, error handling, Google-inspired design, and demo account integration
+*/
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {

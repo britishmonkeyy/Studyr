@@ -1,3 +1,9 @@
+/*
+Module Name: Session Timer Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for study session timing with countdown functionality, productivity rating, pause/resume controls, and completion tracking
+*/
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

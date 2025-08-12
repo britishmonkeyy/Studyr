@@ -1,3 +1,9 @@
+/*
+Module Name: Analytics Routes
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Express routing for analytics endpoints including dashboard summaries, streak statistics, goal tracking, and session analytics updates
+*/
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/authMiddleware');

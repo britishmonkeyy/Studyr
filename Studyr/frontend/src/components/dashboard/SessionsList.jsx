@@ -1,3 +1,9 @@
+/*
+Module Name: Sessions List Component
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: React component for session management with tabbed filtering, search functionality, session cards display, and bulk operations support
+*/
 import React, { useState } from 'react';
 import {
   Box,
