@@ -1,3 +1,9 @@
+/*
+Module Name: Subject Controller
+Module Author: Adam Bolton
+Date Modified: 8/08/2025
+Description: Handles subject CRUD operations and subject assigning to specific users
+*/
 const { Subject } = require('../models');
 
 // Get all subjects for the authenticated user

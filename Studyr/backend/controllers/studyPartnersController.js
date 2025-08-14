@@ -1,3 +1,9 @@
+/*
+Module Name: Study Partners Controller
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Handles study partnership management including partner requests, responses, search functionality, and partnership status management between users
+*/
 const { StudyPartner, User, Subject } = require('../models');
 const { Op } = require('sequelize');
 

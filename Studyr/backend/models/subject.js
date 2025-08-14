@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    // Get a random color for new subjects
+    // Get a random color for new subjects 
     static getRandomColor() {
       const colors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
@@ -96,7 +96,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'other'
     },
-       /* category: {
+    /* Thought it would be better as an enum, provides less options but its easier for organization
+    category: {
       type: DataTypes.STRING(20),
       allowNull: false,
       defaultValue: 'other'

@@ -1,5 +1,13 @@
-﻿const { Message, User, StudyPartner } = require('../models');
+﻿/*
+Module Name: Messages Controller
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Manages messaging functionality between study partners including conversation retrieval, message sending/receiving, read status tracking, and message statistics
+*/
+const { Message, User, StudyPartner } = require('../models');
 const { Op } = require('sequelize');
+const partnerSession = require('../models/partnerSession');
+const { application } = require('express');
 
 // Get conversations list
 const getConversations = async (req, res) => {
@@ -110,7 +118,7 @@ const getMessagesWithPartner = async (req, res) => {
     });
 
     if (!partnership) {
-      return res.status(403).json({
+      return res.status(402).json({
         success: false,
         message: 'You can only message accepted study partners'
       });
@@ -198,7 +206,6 @@ const sendMessage = async (req, res) => {
         message: 'Message too long (max 1000 characters)'
       });
     }
-
     // Verify recipient exists
     const recipient = await User.findByPk(recipientId);
     if (!recipient) {

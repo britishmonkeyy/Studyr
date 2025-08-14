@@ -66,8 +66,8 @@ const validateRegistration = (req, res, next) => {
   }
 
   // Username validation
-  if (username && (username.length < 3 || username.length > 50)) {
-    errors.push('Username must be between 3 and 50 characters');
+  if (username && (username.length < 3 || username.length > 25)) {
+    errors.push('Username must be between 3 and 25 characters');
   }
 
   // Password validation

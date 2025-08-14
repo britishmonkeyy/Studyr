@@ -1,3 +1,9 @@
+/*
+Module Name: Analytics Controller
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Handles analytics endpoints including user statistics, streak tracking, goal progress monitoring, and dashboard data aggregation for study session analytics
+*/
 const AnalyticsService = require('../services/analyticsService');
 
 // Get comprehensive user analytics

@@ -22,15 +22,11 @@ import {
   Grid,
   Chip,
   LinearProgress,
-  Paper,
-  Divider,
-  Badge,
   Alert,
   CircularProgress
 } from '@mui/material';
 import {
   Logout,
-  AccountCircle,
   School,
   Add,
   TrendingUp,
@@ -38,21 +34,16 @@ import {
   Book,
   PlayArrow,
   Schedule,
-  Notifications,
-  Settings,
   Dashboard as DashboardIcon,
   Assignment,
   Today,
   EmojiEvents,
-  Insights,
   Analytics,
-  Pause,
-  Stop,
   People,
   Message
 } from '@mui/icons-material';
 import { sessionsAPI, subjectsAPI, analyticsAPI, removeAuthToken } from '../../services/api';
-import { format, isToday, isTomorrow, parseISO, isWithinInterval, addMinutes } from 'date-fns';
+import { format, isToday, parseISO, isWithinInterval, addMinutes } from 'date-fns';
 import { studyPartnersAPI, messagesAPI } from '../../services/api';
 import CreateSessionModal from './CreateSessionModal';
 import SessionsList from './SessionsList';
@@ -305,6 +296,8 @@ const Dashboard = () => {
                 setShowSessionsList(false);
                 setShowSubjectManagement(false);
                 setShowAnalytics(false);
+                setShowMessages(false);
+                setShowStudyPartners(false);
               }}
             >
               Studyr
@@ -477,7 +470,7 @@ const Dashboard = () => {
               <Alert severity="info" sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <CircularProgress size={20} sx={{ mr: 2 }} />
-                  Loading your analytics...
+                  Loading analytics...
                 </Box>
               </Alert>
             )}
@@ -570,7 +563,7 @@ const Dashboard = () => {
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary">
-                      Active subjects
+                       Subjects
                     </Typography>
                   </CardContent>
                 </Card>

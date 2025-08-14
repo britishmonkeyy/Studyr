@@ -1,3 +1,9 @@
+/*
+Module Name: Analytics Service
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Business logic for analytics processing including streak calculations, session statistics, goal tracking, and comprehensive user analytics aggregation
+*/
 const { StudyStreak, UserAnalytics, StudySession, Subject } = require('../models');
 const { Op } = require('sequelize');
 

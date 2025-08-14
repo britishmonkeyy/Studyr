@@ -1,3 +1,9 @@
+/*
+Module Name: Study Session Controller
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Manages study session operations including creation, retrieval, updating, deletion, and completion tracking with automatic analytics integration
+*/
 const { StudySession, Subject, User } = require('../models');
 const AnalyticsService = require('../services/analyticsService');
 

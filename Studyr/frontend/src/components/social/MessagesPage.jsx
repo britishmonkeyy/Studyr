@@ -2,7 +2,7 @@
 Module Name: Messages Page Component
 Module Author: Adam Bolton
 Date Modified: 12/08/2025
-Description: React component for real-time messaging interface with conversation management, message threading, read status tracking, and partner communication
+Description: React component for messaging interface with conversation management, message threading, read status tracking, and partner communication
 */
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -18,23 +18,16 @@ import {
   TextField,
   IconButton,
   Badge,
-  Divider,
   Button,
   CircularProgress,
   Alert,
   AppBar,
-  Toolbar,
-  Card,
-  CardContent
+  Toolbar
 } from '@mui/material';
 import {
   Send,
   ArrowBack,
-  Chat,
-  Online,
-  MoreVert,
-  Phone,
-  VideoCall
+  Chat
 } from '@mui/icons-material';
 import { messagesAPI } from '../../services/api';
 import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
@@ -59,13 +52,13 @@ const MessagesPage = ({ onBack, selectedPartner }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Auto-refresh messages every 5 seconds when viewing a conversation
+  // Auto-refresh messages every 2 seconds when viewing a conversation
   useEffect(() => {
     let interval;
     if (selectedConversation) {
       interval = setInterval(() => {
         loadMessagesWithPartner(selectedConversation.partnerId, false);
-      }, 5000);
+      }, 2000);
     }
     return () => clearInterval(interval);
   }, [selectedConversation]);
@@ -73,7 +66,7 @@ const MessagesPage = ({ onBack, selectedPartner }) => {
   if (selectedPartner) {
     console.log('Selected partner received:', selectedPartner); // Debug log
     
-    // Check if we already have a conversation with this partner
+    // Check if user already have a conversation with this partner
     const existingConversation = conversations.find(conv => 
       conv.partnerId === selectedPartner.partnerId
     );

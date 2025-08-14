@@ -1,3 +1,9 @@
+/*
+Module Name: Study Session Model
+Module Author: Adam Bolton
+Date Modified: 12/08/2025
+Description: Sequelize model for study sessions with duration calculation, status management, recurring session support, and subject/user associations
+*/
 'use strict';
 const { Model } = require('sequelize');
 
@@ -150,7 +156,7 @@ static associate(models) {
       field: 'duration_minutes',
       validate: {
         min: 1,
-        max: 1440 // Maximum 24 hours
+        max: 480 // Maximum 8 hours
       }
     },
     location: {
@@ -173,7 +179,7 @@ static associate(models) {
       field: 'is_recurring',
       defaultValue: false
     },
-    recurrenceRule: {
+    recurrenceRule: { // Recurring sessions isnt available currently
       type: DataTypes.STRING(255),
       allowNull: true,
       field: 'recurrence_rule',
