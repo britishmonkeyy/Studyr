@@ -215,7 +215,7 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    // Verify they are study partners (unless it's a system message)
+    // Verify they are study partners (unless it's a system message)(system message not exist yet)
     if (messageType === 'text') {
       const partnership = await StudyPartner.findOne({
         where: {

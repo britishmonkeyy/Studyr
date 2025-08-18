@@ -346,12 +346,6 @@ const searchStudyPartners = async (req, res) => {
     // Filter out users we already have partnerships with
     const availableUsers = users.filter(user => !excludeUserIds.includes(user.userId));
 
-    // Add online status
-    const usersWithStatus = availableUsers.map(user => ({
-      ...user.toJSON(),
-      isOnline: user.lastLogin && new Date() - new Date(user.lastLogin) < 15 * 60 * 1000
-    }));
-
     res.json({
       success: true,
       data: { 

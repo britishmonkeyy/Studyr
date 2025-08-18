@@ -2,7 +2,7 @@
 Module Name: Login Component
 Module Author: Adam Bolton
 Date Modified: 12/08/2025
-Description: React component for user authentication with form validation, error handling, Google-inspired design, and demo account integration
+Description: React component for user authentication with form validation, error handling, Google-inspired design, and demo account integration for people too lazy to make an account
 */
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -328,7 +328,7 @@ const Login = () => {
         {/* Footer */}
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="body2" color="text.secondary">
-            Built for students, by students
+            Kye go away
           </Typography>
         </Box>
       </Container>

@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       if (!lastStudy) {
         return {
           status: 'no_streak',
-          message: 'Start your first streak!',
+          message: 'Start your first streak',
           isAtRisk: false,
           currentStreak: 0
         };

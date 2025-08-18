@@ -44,7 +44,7 @@ const registerUser = async (req, res) => {
       lastName,
       email,
       username,
-      passwordHash,  // ← Include password hash in creation
+      passwordHash,  // Include password hash in creation
       studyLevel,
       yearLevel,
       dateOfBirth

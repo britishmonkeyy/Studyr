@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'message_text',
       validate: {
         notEmpty: true,
-        len: [1, 1000] // Max 1000 characters
+        len: [1, 250] // Max 250 characters (After the Kye and Jack incident)
       }
     },
     isRead: {

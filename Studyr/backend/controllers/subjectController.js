@@ -68,7 +68,7 @@ const createSubject = async (req, res) => {
   }
 };
 
-// Get subject by ID (only if owned by user)
+// Get subject by ID
 const getSubjectById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,7 +98,7 @@ const getSubjectById = async (req, res) => {
   }
 };
 
-// Update subject by ID (only if owned by user)
+// Update subject by ID
 const updateSubject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -158,7 +158,7 @@ const updateSubject = async (req, res) => {
   }
 };
 
-// Delete subject by ID (only if owned by user)
+// Delete subject by ID
 const deleteSubject = async (req, res) => {
   try {
     const { id } = req.params;

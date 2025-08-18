@@ -53,7 +53,7 @@ app.listen(PORT, '0.0.0.0', () => {
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
-      AND table_name IN ('study_streaks', 'user_analytics', 'achievements', 'user_achievements')
+      AND table_name IN ('study_streaks', 'user_analytics')
       ORDER BY table_name;
     `);
     

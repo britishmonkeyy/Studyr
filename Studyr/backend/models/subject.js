@@ -1,8 +1,8 @@
 /*
 Module Name: Subject Modelling
 Module Author: Adam Bolton
-Date Modified:
-Description:
+Date Modified: 13/08/2025
+Description: Sequelize model for user subjects with all CRUD operations, colour management and study session management
 */
 'use strict';
 const { Model } = require('sequelize');

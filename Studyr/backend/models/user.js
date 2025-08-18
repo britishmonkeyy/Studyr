@@ -109,7 +109,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     // Create default subjects for new user (Doesn't work currently?)
-    async createDefaultSubjects() { // Added breakpoint and stepped through
+    async createDefaultSubjects() { // Added breakpoint and stepped through (didn't fix)
       const { Subject } = require('./subject');
       
       const defaultSubjects = [
