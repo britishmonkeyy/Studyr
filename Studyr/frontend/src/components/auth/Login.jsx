@@ -116,7 +116,7 @@ const Login = () => {
               mb: 4
             }}
           >
-            Your study companion
+            Studying Made Easy
           </Typography>
         </Box>
 
@@ -234,22 +234,6 @@ const Login = () => {
                 }}
               />
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: '#1a73e8',
-                    textTransform: 'none',
-                    fontWeight: 500,
-                    '&:hover': {
-                      bgcolor: 'rgba(26, 115, 232, 0.04)'
-                    }
-                  }}
-                >
-                  Forgot password?
-                </Button>
-              </Box>
-
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button
                   component={Link}
@@ -325,12 +309,6 @@ const Login = () => {
           </Typography>
         </Paper>
 
-        {/* Footer */}
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="body2" color="text.secondary">
-            Kye go away
-          </Typography>
-        </Box>
       </Container>
     </Box>
   );
