@@ -13,7 +13,7 @@ import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import { getAuthToken } from './services/api';
 
-// Create Google-inspired theme
+// Google-inspired theme
 const theme = createTheme({
   palette: {
     primary: {
