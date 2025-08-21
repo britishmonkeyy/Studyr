@@ -1,7 +1,7 @@
 /*
 Module Name: User Model
 Module Author: Adam Bolton
-Date Modified: 12/08/2025
+Date Modified: 21/08/2025
 Description: Sequelize model for user accounts with authentication, profile management, study level tracking, and associated relationships to sessions and subjects
 */
 'use strict';
@@ -110,25 +110,25 @@ module.exports = (sequelize, DataTypes) => {
 
     // Create default subjects for new user (Doesn't work currently?)
     async createDefaultSubjects() { // Added breakpoint and stepped through (didn't fix)
-      const { Subject } = require('./subject');
+      const { Subject } = require('./index'); // Fixed as of 21/08/2025
       
       const defaultSubjects = [
         {
           subjectName: 'Mathematics',
           category: 'mathematics',
-          colorHex: '#FF6B6B',
+          colorHex: '#42a6e9ff',
           iconEmoji: '🔢'
         },
         {
           subjectName: 'English',
           category: 'english', 
-          colorHex: '#4ECDC4',
+          colorHex: '#15dd62ff',
           iconEmoji: '📖'
         },
         {
-          subjectName: 'Science',
+          subjectName: 'Physics',
           category: 'physics',
-          colorHex: '#45B7D1',
+          colorHex: '#8bc72bff',
           iconEmoji: '🔬'
         }
       ];
